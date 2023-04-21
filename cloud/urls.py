@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('documents/',include('documents.urls')),
     path('images/',include('images.urls')),
+    path('music/',include('music.urls')),
 ]
