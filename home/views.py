@@ -1,27 +1,18 @@
-
-from rest_framework import generics
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework import status
 from .models import File
 from .serializers import FileSerializer
+from django.utils import timezone
 
-class UploadFileView(generics.CreateAPIView):
-    queryset = File.objects.all()
-    serializer_class = FileSerializer
+@api_view(['GET'])
+def search_files(request, query):
+    file_serached = File.objects.filter(name__icontains=query)
+    serializer = FileSerializer(file_serached, many=True)
+    return Response(serializer.data)
 
-class DeleteFileView(APIView):
-    def delete(self, request, id):
-        try:
-            file = File.objects.get(id=id)
-            file.delete()
-            return Response({'message': 'File deleted successfully.'})
-        except File.DoesNotExist:
-            return Response({'message': 'File not found.'}, status=404)
-
-class RetrieveFileView(APIView):
-    def post(self, request):
-        try:
-            file = File.objects.get(id=request.data['id'])
-            return Response({'file': file.file.url})
-        except File.DoesNotExist:
-            return Response({'message': 'File not found.'}, status=404)
+@api_view(['GET'])
+def recently_added_files(request):
+    recent_files = File.objects.filter(created_at__gte=timezone.now()-timezone.timedelta(days=7)).order_by('-created_at')
+    serializer = FileSerializer(recent_files, many=True)
+    return Response(serializer.data)
