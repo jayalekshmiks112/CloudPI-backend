@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'documents',
     'images',
     'music',
+    'videos',
     'rest_framework_simplejwt',
     'home.apps.HomeConfig',
     'django.contrib.admin',
