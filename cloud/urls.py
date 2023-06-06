@@ -24,4 +24,5 @@ urlpatterns = [
     path('images/',include('images.urls')),
     path('music/',include('music.urls')),
     path('videos',include('videos.urls')),
+    path('storage/',include('storage.urls')),
 ]

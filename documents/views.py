@@ -1,10 +1,12 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,parser_classes
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Document
 from .serializers import DocumentSerializer
+from rest_framework.parsers import MultiPartParser,FormParser
 
 @api_view(['GET', 'POST'])
+@parser_classes([MultiPartParser,FormParser])
 def document_view_upload(request):
     if request.method == 'GET':
         documents = Document.objects.all()
@@ -17,7 +19,6 @@ def document_view_upload(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 @api_view(['DELETE'])
 def document_delete(request, pk):
     try:
