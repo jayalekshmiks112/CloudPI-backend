@@ -15,6 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('home/',include('home.urls')),
@@ -25,4 +27,8 @@ urlpatterns = [
     path('music/',include('music.urls')),
     path('videos',include('videos.urls')),
     path('storage/',include('storage.urls')),
+    path('starred/',include('starred.urls')),
+    path('locked/',include('locked.urls')),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

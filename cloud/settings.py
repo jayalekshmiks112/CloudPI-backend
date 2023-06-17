@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,6 +39,8 @@ INSTALLED_APPS = [
     'music',
     'videos',
     'storage',
+    'starred',
+    'locked',
     'rest_framework_simplejwt',
     'home.apps.HomeConfig',
     'django.contrib.admin',
@@ -83,6 +86,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'cloud.wsgi.application'
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -161,3 +166,9 @@ REST_FRAMEWORK = {
     ]
 }
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER ='cloudpi2023@​yahoo.com'
+EMAIL_HOST_PASSWORD = 'ypmipfxwadtmoiik'
