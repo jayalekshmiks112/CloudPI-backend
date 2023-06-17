@@ -6,6 +6,11 @@ from documents.models import Document
 from images.models import Images
 from music.models import Music
 from videos.models import Videos
+from rest_framework.views import APIView
+from django.core.files.storage import default_storage
+
+from .utils import get_storage_info
+
 
 @api_view(['GET'])
 def storage_information(request):
@@ -29,3 +34,25 @@ def storage_information(request):
     )
     serializer = StorageSerializer(storage)
     return Response(serializer.data)
+"""
+class FileUploadView(APIView):
+    def post(self, request):
+        file = request.FILES.get('file')
+        file_size = file.size / (1024 ** 3)  
+
+        if file_size > get_storage_info()['remaining_storage']:
+            return Response({'detail': 'Not enough storage capacity.'})
+
+        file_path = default_storage.save(file.name, file)
+
+        file_obj = File(name=file.name, size=file_size)
+        file_obj.save()
+
+        serializer = FileSerializer(file_obj)
+        return Response(serializer.data)
+"""
+
+class StorageInfoView(APIView):
+    def get(self, request):
+        storage_info = get_storage_info()
+        return Response(storage_info)

@@ -1,29 +1,43 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
-
+from rest_framework.views import APIView
 from documents.models import Document
-from starred.models import StarredDocument
+from images.models import Images
+from videos.models import Videos
+from music.models import Music
 
-def index(request):
-    starred_documents = StarredDocument.objects.all()
+class StarredListView(APIView):
+    def get(self, request):
+        documents = Document.objects.filter(is_starred=True)
+        images = Images.objects.filter(is_starred=True)
+        videos = Videos.objects.filter(is_starred=True)
+        music = Music.objects.filter(is_starred=True)
 
-    context = {
-        'starred_documents': starred_documents,
-    }
+        # Customize the response as per your needs
+        response_data = {
+            'documents': list(documents.values()),
+            'images': list(images.values()),
+            'videos': list(videos.values()),
+            'music': list(music.values()),
+        }
 
-    return Response(context)
+        return Response(response_data)
 
-def add_to_starred(request, document_id):
-    document = Document.objects.get(id=document_id)
+class StarredUpdateView(APIView):
+    def put(self, request, app_label,id):
+        model_map = {
+            'documents': Document,
+            'images': Images,
+            'videos': Videos,
+            'music': Music,
+        }
 
-    if not document.is_starred:
-        starred_document = StarredDocument(document=document)
-        starred_document.save()
+        Model = model_map.get(app_label)
+        if not Model:
+            return Response({'detail': 'Invalid app label'}, status=400)
 
-    return Response({'success': True})
+        item = get_object_or_404(Model, id=id)
+        item.is_starred = not item.is_starred
+        item.save()
 
-
-
-
-
-
+        return Response({'detail': 'Item starred status updated successfully'})

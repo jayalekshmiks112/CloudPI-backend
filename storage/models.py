@@ -8,3 +8,4 @@ class Storage(models.Model):
     music_percentage = models.FloatField(default=0)
     videos_percentage = models.FloatField(default=0)
 
+

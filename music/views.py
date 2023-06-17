@@ -30,9 +30,9 @@ def music_delete(request, pk):
         music.delete()
 
         if is_starred:
-            starred = request.user.starred_documents.all()
+            starred = request.user.starred_music.all()
             if music in starred:
-                request.user.starred_documents.remove(music)
+                request.user.starred_music.remove(music)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -43,7 +43,7 @@ def add_to_starred(request, pk):
     except Music.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
-    request.user.starred_documents.add(music)
+    request.user.starred_music.add(music)
 
     return Response(status=status.HTTP_204_NO_CONTENT)
 

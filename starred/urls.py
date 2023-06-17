@@ -1,9 +1,10 @@
+# starred/urls.py
 from django.urls import path
+from .views import StarredListView, StarredUpdateView
 
-from .views import index, add_to_starred
+app_name = 'starred'
 
 urlpatterns = [
-    path('', index, name='index'),
-    path('add_to_starred/<int:document_id>', add_to_starred, name='add_to_starred'),
+    path('', StarredListView.as_view(), name='list'),
+    path('<str:app_label>/<int:id>/', StarredUpdateView.as_view(), name='update'),
 ]
-

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import StarredDocument
+from .models import Starred
 
-admin.site.register(StarredDocument)
+admin.site.register(Starred)

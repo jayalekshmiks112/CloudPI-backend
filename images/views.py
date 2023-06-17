@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Images
 from .serializers import ImageSerializer
+from starred.models import Starred
 
 @api_view(['GET', 'POST'])
 def image_view_upload(request):
@@ -30,9 +31,9 @@ def image_delete(request, pk):
         image.delete()
 
         if is_starred:
-            starred = request.user.starred_documents.all()
+            starred = request.user.starred_images.all()
             if image in starred:
-                request.user.starred_documents.remove(image)
+                request.user.starred_images.remove(image)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -42,7 +43,44 @@ def add_to_starred(request, pk):
         image = Images.objects.get(pk=pk)
     except Images.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    
-    request.user.starred_documents.add(image)
+
+    if image.is_starred:
+        starred_image=Starred.objects.get(image=image)
+        starred_image.delete()
+    else:
+        starred_image = Starred(image=image)
+        starred_image.save()
+
+    image.is_starred = not image.is_starred
+    image.save()
 
     return Response(status=status.HTTP_204_NO_CONTENT)
+
+from rest_framework import generics
+
+from .models import Images
+from .serializers import ImageSerializer
+
+
+class StarredImagetListView(generics.ListAPIView):
+    serializer_class = ImageSerializer
+
+    def get_queryset(self):
+        queryset = Images.objects.filter(is_starred=True)
+        return queryset
+
+class StarredImageUpdateView(generics.UpdateAPIView):
+    queryset = Images.objects.all()
+    serializer_class = ImageSerializer
+    lookup_field = 'id'
+    allowed_methods = ['PUT']
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        is_starred = instance.is_starred
+
+        instance.is_starred = not is_starred
+        instance.save()
+
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)

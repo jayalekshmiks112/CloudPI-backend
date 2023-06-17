@@ -5,7 +5,7 @@ from .models import Document
 import os
 from .serializers import DocumentSerializer
 from rest_framework.parsers import MultiPartParser,FormParser
-from starred.models import StarredDocument
+from starred.models import Starred
 
 from django.conf import settings
 from django.core.files.storage import default_storage
@@ -57,10 +57,10 @@ def add_to_starred(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if document.is_starred:
-        starred_document=StarredDocument.objects.get(document=document)
+        starred_document=Starred.objects.get(document=document)
         starred_document.delete()
     else:
-        starred_document = StarredDocument(document=document)
+        starred_document = Starred(document=document)
         starred_document.save()
 
     document.is_starred = not document.is_starred

@@ -1,7 +1,11 @@
 from django.urls import path
-from storage.views import storage_information
+from . import views
+
+app_name = 'stored'
 
 urlpatterns = [
-    path('', storage_information),
+    path('', views.storage_information),
+    #path('upload/', FileUploadView.as_view(), name='file-upload'),
+    path('storage-info/',views.StorageInfoView.as_view(), name='storage-info'),
     
 ]
