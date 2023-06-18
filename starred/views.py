@@ -13,7 +13,7 @@ class StarredListView(APIView):
         videos = Videos.objects.filter(is_starred=True)
         music = Music.objects.filter(is_starred=True)
 
-        # Customize the response as per your needs
+        
         response_data = {
             'documents': list(documents.values()),
             'images': list(images.values()),

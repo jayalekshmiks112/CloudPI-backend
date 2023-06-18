@@ -1,11 +1,13 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,parser_classes
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Images
 from .serializers import ImageSerializer
 from starred.models import Starred
+from rest_framework.parsers import MultiPartParser,FormParser
 
 @api_view(['GET', 'POST'])
+@parser_classes([MultiPartParser,FormParser])
 def image_view_upload(request):
     if request.method == 'GET':
         image = Images.objects.all()
@@ -28,12 +30,16 @@ def image_delete(request, pk):
 
     if request.method == 'DELETE':
         is_starred = image.is_starred
-        image.delete()
+        file_path=image.file.path
+        #print(file_path)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        document.delete()
 
         if is_starred:
-            starred = request.user.starred_images.all()
-            if image in starred:
-                request.user.starred_images.remove(image)
+            starred = request.user.starred_documents.all()
+            if document in starred:
+                request.user.starred_documents.remove(document)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
